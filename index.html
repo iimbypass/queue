@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="./style.css">
+<script src="https://www.youtube.com/iframe_api"></script>
+<title>Music Player</title>
+</head>
+<body>
+<!-- <div id="music-player-container">
+    <audio id="audio-player" controls></audio>
+    <ol id="playlist">
+        
+    </ol>
+</div> -->
+<!-- <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6LQPatWcNGnix8DfEsGu1I?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe> -->
+      <form id="addVideoForm">
+        <input type="text" id="youtubeLink" placeholder="Enter YouTube video link">
+        <button type="submit">Add to Queue</button>
+      </form>
+      <ul id="videoQueue"></ul>
+      <div id="player"></div>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- <script src="app.js"></script> -->
+</body>
+<script>
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '390',
+          width: '640',
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+
+      function onPlayerReady(event) {
+        //chạy bắt đầu chạy
+      }
+
+      function onPlayerStateChange(event) {
+        if(event.data == YT.PlayerState.ENDED) {
+          playNextVideo();
+        }
+      }
+      var queue = [];
+
+        document.getElementById('addVideoForm').onsubmit = function(e) {
+          e.preventDefault();
+          var link = document.getElementById('youtubeLink').value;
+          var videoId = getVideoIdFromLink(link);
+          queue.push(videoId);
+          displayQueue();
+          if (queue.length === 1) { // Nếu là video đầu tiên, chúng ta phát nó
+            playVideo(videoId);
+          }
+        };
+
+        function getVideoIdFromLink(link) {
+          // Phân tích link và lấy ID của video
+          var videoId = link.split('v=')[1];
+          return videoId;
+        }
+
+        function displayQueue() {
+          // Hiển thị danh sách hàng chờ
+          var list = document.getElementById('videoQueue');
+          list.innerHTML = '';
+          queue.forEach(function(videoId) {
+            var li = document.createElement('li');
+            li.textContent = videoId;
+            list.appendChild(li);
+          });
+        }
+
+        function playNextVideo() {
+          queue.shift(); // Loại bỏ video đã phát
+          if (queue.length > 0) {
+            playVideo(queue[0]); // Phát video tiếp theo trong hàng đợi
+          }
+          displayQueue();
+        }
+
+        function playVideo(videoId) {
+          player.loadVideoById(videoId);
+        }
+</script>
+</html>
